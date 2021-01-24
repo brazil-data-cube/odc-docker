@@ -15,6 +15,9 @@ conda create --name odc \
 
 source activate odc
 
+python -m ipykernel install --name odc \
+                            --display-name "Python (Open Data Cube)"
+
 mkdir ~/Devel && cd ~/Devel && git clone https://github.com/opendatacube/datacube-core.git
 
 cd datacube-core
@@ -25,14 +28,4 @@ pre-commit install
 
 conda install --yes \
               --channel conda-forge \
-              gdal geopandas matplotlib ipyleaflet
-
-jupyter labextension install @jupyter-widgets/jupyterlab-manager
-jupyter labextension install jupyter-leaflet
-jupyter nbextension enable --py --sys-prefix ipyleaflet
-jupyter labextension install @jupyterlab/debugger
-jupyter labextension install @jupyterlab/geojson-extension
-jupyter labextension install @jupyterlab/vega3-extension
-jupyter labextension install @jupyterlab/mathjax3-extension
-jupyter labextension install @jupyterlab/github
-jupyter labextension install @jupyterlab/latex
+              gdal geopandas matplotlib ipyleaflet rasterio fiona shapely seaborn rtree

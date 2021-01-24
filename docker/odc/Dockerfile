@@ -1,6 +1,15 @@
 FROM jupyter/datascience-notebook
 
+
+#
+# Run command as root
+#
 USER root
+
+
+#
+# Install ODC system dependencies
+#
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     build-essential \
@@ -9,11 +18,34 @@ RUN apt-get update && \
     && apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+
+#
+# Install JupyterLab extensions
+#
+RUN conda install --yes ipyleaflet \
+    && jupyter labextension install @jupyter-widgets/jupyterlab-manager \
+    && jupyter labextension install jupyter-leaflet \
+    && jupyter nbextension enable --py --sys-prefix ipyleaflet \
+    && jupyter labextension install @jupyterlab/debugger \
+    && jupyter labextension install @jupyterlab/geojson-extension \
+    && jupyter labextension install @jupyterlab/vega3-extension \
+    && jupyter labextension install @jupyterlab/mathjax3-extension \
+    && jupyter labextension install @jupyterlab/github \
+    && jupyter labextension install @jupyterlab/latex \
+    && jupyter nbextension enable --py widgetsnbextension
+
+
+#
+# Install ODC in a new conda environment named odc
+#
 COPY odc.sh odc.sh
-RUN ./odc.sh
+RUN ./odc.sh && rm odc.sh
 
 COPY .datacube.conf .datacube.conf
 RUN chown $NB_UID:users .datacube.conf
 
+
+#
+# Change user to jovyan
+#
 USER $NB_UID
-RUN conda install --yes nb_conda
