@@ -1,0 +1,30 @@
+version: "3.2"
+
+services:
+  scheduler:
+    image: daskdev/dask:2.27.0
+    hostname: dask-scheduler
+    ports:
+      - "8786:8786"
+      - "8787:8787"
+    command: ["dask-scheduler"]
+    networks:
+      - bdc-odc-net
+
+  worker:
+    image: bdc/odc-stats-worker:1.8
+    hostname: dask-worker
+    environment: 
+      - DATA_DIR_SOURCE=/data
+      - DATA_DIR_TARGET=/data
+    volumes:
+      - type: bind
+        source: ${DATA_DIR_SOURCE}
+        target: ${DATA_DIR_TARGET}
+    command: ["dask-worker", "tcp://scheduler:8786"]
+    networks:
+      - bdc-odc-net
+
+networks:
+  bdc-odc-net:
+    external: true
