@@ -14,13 +14,10 @@ services:
   worker:
     image: bdc/odc-stats-worker:1.8
     hostname: dask-worker
-    environment: 
-      - DATA_DIR_SOURCE=/data
-      - DATA_DIR_TARGET=/data
     volumes:
       - type: bind
-        source: ${DATA_DIR_SOURCE}
-        target: ${DATA_DIR_TARGET}
+        source: /data
+        target: /data
     command: ["dask-worker", "tcp://scheduler:8786"]
     networks:
       - bdc-odc-net
