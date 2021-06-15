@@ -19,12 +19,14 @@ set -eou pipefail
 #
 if [ $1 -eq 1 ]
 then
+    ./install.sh -e odc-dev -d "Python (Open Data Cube Development)" -m development
+fi
+
+if [ $2 -eq 1 ]
+then
     echo -e "\e[31m Warning! The development mode gives too much power to the container user\e[0m"
     echo -e "> \e[31m With great power comes great responsibility\e[0m"
 
-    ./install.sh -e odc-dev -d "Python (Open Data Cube Development)" -m development
-
-    # jovyan as root
     echo "$NB_USER ALL=(ALL:ALL) ALL" >> /etc/sudoers
     adduser $NB_USER sudo
     echo "$NB_USER:$NB_USER" | chpasswd
