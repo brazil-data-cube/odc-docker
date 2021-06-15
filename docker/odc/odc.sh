@@ -7,25 +7,27 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 
-set -e
+set -eou pipefail
 
-conda create --name odc \
-             --channel conda-forge \
-             python=3.6 datacube pre_commit psycopg2 ipykernel
+#
+# Open Data Cube user environment (Standard permissions)
+#
+./install.sh -e odc -d "Python (Open Data Cube)"
 
-source activate odc
+#
+# Open Data Cube development environment (Allow packages installation from conda and pip)
+#
+if [ $1 -eq 1 ]
+then
+    ./install.sh -e odc-dev -d "Python (Open Data Cube Development)" -m development
+fi
 
-python -m ipykernel install --name odc \
-                            --display-name "Python (Open Data Cube)"
+if [ $2 -eq 1 ]
+then
+    echo -e "\e[31m Warning! The development mode gives too much power to the container user\e[0m"
+    echo -e "> \e[31m With great power comes great responsibility\e[0m"
 
-mkdir ~/Devel && cd ~/Devel && git clone https://github.com/opendatacube/datacube-core.git
-
-cd datacube-core
-
-pip install --upgrade -e .
-
-pre-commit install
-
-conda install --yes \
-              --channel conda-forge \
-              gdal geopandas matplotlib ipyleaflet rasterio fiona shapely seaborn rtree
+    echo "$NB_USER ALL=(ALL:ALL) ALL" >> /etc/sudoers
+    adduser $NB_USER sudo
+    echo "$NB_USER:$NB_USER" | chpasswd
+fi

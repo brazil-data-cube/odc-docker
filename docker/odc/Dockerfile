@@ -1,5 +1,7 @@
 FROM jupyter/datascience-notebook@sha256:ed6c44b7b513783e541e251fa057ced63e91887179c16ae5c535fe103c86c3f4
 
+ARG JOVYAN_AS_ROOT=0
+ARG BUILD_DEVELOPMENT_MODE=0
 
 #
 # Run command as root
@@ -39,11 +41,14 @@ RUN conda install --yes ipyleaflet \
 # Install ODC in a new conda environment named odc
 #
 COPY odc.sh odc.sh
-RUN ./odc.sh && rm odc.sh
+COPY install.sh install.sh
+COPY extras extras
+
+RUN ./odc.sh $BUILD_DEVELOPMENT_MODE $JOVYAN_AS_ROOT \
+    && rm -rf odc.sh install.sh extras
 
 COPY .datacube.conf .datacube.conf
 RUN chown $NB_UID:users .datacube.conf
-
 
 #
 # Change user to jovyan
