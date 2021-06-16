@@ -50,7 +50,7 @@ echo "Building Dask-Worker image for ODC-Stats"
 cd odc-stats-dask-worker/
 
 docker build ${ODC_BUILD_MODE} \
-             -t "${ODC_STATS_DASK_IMAGE_TAG}" \
+             -t "${ODC_DASK_IMAGE_TAG}" \
              --file Dockerfile .
 
 
